@@ -1,3 +1,3 @@
-export * from './contactsStateReducer'
+export * from './contactsListPageReducer'
 export * from './favoriteContactsStateReducer'
-export * from './groupContactsStateReducer'
+export * from './groupListPageReducer'

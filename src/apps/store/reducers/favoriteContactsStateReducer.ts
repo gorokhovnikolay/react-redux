@@ -1,5 +1,5 @@
 import { DATA_CONTACT } from "src/__data__";
-import {  ProjectActions } from "../actions";
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = [
     DATA_CONTACT[0].id,
@@ -9,10 +9,15 @@ const initialState = [
   ]
 
 
-export const favoriteContactsState = (state=initialState,action:ProjectActions)=>{
-    switch (action.type) {
-    
-        default:
-            return state;
+
+export const favoriteContactsSlice = createSlice({
+    name:'favorite',
+    initialState,
+    reducers:{
+        favoriteContactsState:()=>{
+            return initialState
+        }
     }
-}
+})
+
+export const {favoriteContactsState} = favoriteContactsSlice.actions

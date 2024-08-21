@@ -1,43 +1,33 @@
-import React, { memo, useEffect, useState } from "react";
+import { memo, useEffect } from "react";
 import { Col, Row } from "react-bootstrap";
 import { ContactCard } from "src/components/ContactCard";
 import { FilterForm, FilterFormValues } from "src/components/FilterForm";
-import { ContactDto } from "src/types/dto/ContactDto";
-import { useAppSelector } from "src/apps/store/hooks/hooks";
+
+import { useAppDispatch, useAppSelector } from "src/apps/store/hooks/hooks";
+import {
+  filterContactsReducer,
+  useGetContactsMutMutation,
+  useGetGroupsMutation,
+} from "src/apps/store/reducers";
 
 export const ContactListPage = memo(() => {
-  const contactsState = useAppSelector((s) => s.contact);
-  const groupContactsState = useAppSelector((s) => s.group);
+  const dispatch = useAppDispatch();
+  const contacts = useAppSelector((s) => s.contacts);
+  const groupContactsState = useAppSelector((s) => s.groups);
 
-  const [contacts, setContacts] = useState<ContactDto[]>([]);
+  const [mutation] = useGetContactsMutMutation();
+  const [getGroup] = useGetGroupsMutation({ fixedCacheKey: "key" });
 
   useEffect(() => {
-    setContacts(contactsState);
-  }, [contactsState]);
+    mutation("123");
+    getGroup();
+  }, [mutation, getGroup]);
 
   const onSubmit = (fv: Partial<FilterFormValues>) => {
-    let findContacts: ContactDto[] = contactsState;
-
-    if (fv.name) {
-      const fvName = fv.name.toLowerCase();
-      findContacts = findContacts.filter(
-        ({ name }) => name.toLowerCase().indexOf(fvName) > -1
-      );
+    if (fv.groupId === "Open this select menu" && fv.name === "") {
+      mutation("123");
     }
-
-    if (fv.groupId) {
-      const groupContacts = groupContactsState.find(
-        ({ id }) => id === fv.groupId
-      );
-
-      if (groupContacts) {
-        findContacts = findContacts.filter(({ id }) =>
-          groupContacts.contactIds.includes(id)
-        );
-      }
-    }
-
-    setContacts(findContacts);
+    dispatch(filterContactsReducer({ fv, groupContactsState }));
   };
 
   return (

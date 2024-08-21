@@ -11,7 +11,6 @@ import {
 } from "src/pages";
 import { Provider } from "react-redux";
 import { store } from "../store/store";
-import { DataComponent } from "./DataComponent";
 
 export const MainApp = () => {
   return (
@@ -21,22 +20,20 @@ export const MainApp = () => {
     >
       <Provider store={store}>
         <BrowserRouter>
-          <DataComponent>
-            <Routes>
-              <Route path="/" element={<Layout />}>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<ContactListPage />} />
+              <Route path="contact">
                 <Route index element={<ContactListPage />} />
-                <Route path="contact">
-                  <Route index element={<ContactListPage />} />
-                  <Route path=":contactId" element={<ContactPage />} />
-                </Route>
-                <Route path="groups">
-                  <Route index element={<GroupListPage />} />
-                  <Route path=":groupId" element={<GroupPage />} />
-                </Route>
-                <Route path="favorit" element={<FavoritListPage />} />
+                <Route path=":contactId" element={<ContactPage />} />
               </Route>
-            </Routes>
-          </DataComponent>
+              <Route path="groups">
+                <Route index element={<GroupListPage />} />
+                <Route path=":groupId" element={<GroupPage />} />
+              </Route>
+              <Route path="favorit" element={<FavoritListPage />} />
+            </Route>
+          </Routes>
         </BrowserRouter>
       </Provider>
     </ThemeProvider>

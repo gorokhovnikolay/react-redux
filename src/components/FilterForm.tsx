@@ -1,8 +1,9 @@
 import { Formik } from "formik";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import { FormikConfig } from "formik/dist/types";
 import { useAppSelector } from "src/apps/store/hooks/hooks";
+import { useGetGroupsMutation } from "src/apps/store/reducers";
 
 export interface FilterFormValues {
   name: string;
@@ -13,7 +14,12 @@ interface FilterFormProps extends FormikConfig<Partial<FilterFormValues>> {}
 
 export const FilterForm = memo<FilterFormProps>(
   ({ onSubmit, initialValues = {} }) => {
-    const groupContactsList = useAppSelector((s) => s.group);
+    const groupContactsList = useAppSelector((s) => s.groups);
+    const [getGroup, { data }] = useGetGroupsMutation({ fixedCacheKey: "key" });
+    console.log(data);
+    useEffect(() => {
+      getGroup();
+    }, [getGroup]);
     return (
       <Formik initialValues={initialValues} onSubmit={onSubmit}>
         {({ handleChange, handleSubmit }) => (

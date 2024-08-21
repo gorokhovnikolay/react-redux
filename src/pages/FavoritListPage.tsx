@@ -7,7 +7,7 @@ import { useAppSelector } from "src/apps/store/hooks/hooks";
 export const FavoritListPage = memo(() => {
   const [contacts, setContacts] = useState<ContactDto[]>([]);
 
-  const contactsState = useAppSelector((s) => s.contact);
+  const contactsState = useAppSelector((s) => s.contacts);
   const favoriteContactsState = useAppSelector((s) => s.favorite);
 
   useEffect(() => {

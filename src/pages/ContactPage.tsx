@@ -9,7 +9,7 @@ import { useAppSelector } from "src/apps/store/hooks/hooks";
 export const ContactPage = () => {
   const { contactId } = useParams<{ contactId: string }>();
   const [contact, setContact] = useState<ContactDto>();
-  const contactsState = useAppSelector((s) => s.contact);
+  const contactsState = useAppSelector((s) => s.contacts);
 
   useEffect(() => {
     setContact(() => contactsState.find(({ id }) => id === contactId));

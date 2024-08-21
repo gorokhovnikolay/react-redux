@@ -1,33 +1,28 @@
-import React, { memo, useEffect, useState } from "react";
+import { memo, useEffect } from "react";
 import { Col, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import { ContactDto } from "src/types/dto/ContactDto";
-import { GroupContactsDto } from "src/types/dto/GroupContactsDto";
 import { GroupContactsCard } from "src/components/GroupContactsCard";
 import { Empty } from "src/components/Empty";
 import { ContactCard } from "src/components/ContactCard";
-import { useAppSelector } from "src/apps/store/hooks/hooks";
+import { useAppDispatch, useAppSelector } from "src/apps/store/hooks/hooks";
+import { groupPageReducer } from "src/apps/store/reducers/groupPageReducer";
+import { contactsListByGroupReducer } from "src/apps/store/reducers/contactsListByGroupReducer";
 
 export const GroupPage = memo(() => {
+  const dispatch = useAppDispatch();
   const { groupId } = useParams<{ groupId: string }>();
-  const [contacts, setContacts] = useState<ContactDto[]>([]);
-  const [groupContacts, setGroupContacts] = useState<GroupContactsDto>();
 
-  const groupContactsState = useAppSelector((s) => s.group);
-  const contactsState = useAppSelector((s) => s.contact);
+  const groupContactsState = useAppSelector((s) => s.groups);
+  const contactsState = useAppSelector((s) => s.contacts);
+  const groupContacts = useAppSelector((s) => s.group);
+  const contacts = useAppSelector((s) => s.groupContacts);
 
   useEffect(() => {
-    const findGroup = groupContactsState.find(({ id }) => id === groupId);
-    setGroupContacts(findGroup);
-    setContacts(() => {
-      if (findGroup) {
-        return contactsState.filter(({ id }) =>
-          findGroup.contactIds.includes(id)
-        );
-      }
-      return [];
-    });
-  }, [groupId, contactsState, groupContactsState]);
+    dispatch(groupPageReducer({ groupId, groupContactsState }));
+    if (groupContacts.contactIds) {
+      dispatch(contactsListByGroupReducer({ groupContacts, contactsState }));
+    }
+  }, [dispatch, groupId, contactsState, groupContacts, groupContactsState]);
 
   return (
     <Row className="g-4">
@@ -36,7 +31,9 @@ export const GroupPage = memo(() => {
           <Col xxl={12}>
             <Row xxl={3}>
               <Col className="mx-auto">
-                <GroupContactsCard groupContacts={groupContacts} />
+                {groupContacts.contactIds && (
+                  <GroupContactsCard groupContacts={groupContacts} />
+                )}
               </Col>
             </Row>
           </Col>

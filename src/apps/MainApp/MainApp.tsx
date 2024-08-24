@@ -6,8 +6,8 @@ import {
   ContactListPage,
   GroupPage,
   ContactPage,
-  FavoritListPage,
   GroupListPage,
+  FavoritListPage,
 } from "src/pages";
 import { Provider } from "react-redux";
 import { store } from "../store/store";

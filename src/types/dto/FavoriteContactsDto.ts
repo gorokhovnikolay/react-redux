@@ -1,3 +1,5 @@
 import {ContactDto} from './ContactDto';
 
-export type FavoriteContactsDto = ContactDto['id'][];
+export type FavoriteContactsDto ={
+    id:ContactDto['id']
+} [];

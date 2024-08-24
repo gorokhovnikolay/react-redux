@@ -1,4 +1,8 @@
-{
+{"favorite":[
+    {"id":"ecd667da-0513-4dd5-ba50-e7cc69f6573c"},
+    {"id":"84465d40-ef7b-41c7-8de4-29e7fb4ddd21"},
+    {"id":"069081b4-12b8-4bbd-84d2-1715140459c3"}
+  ],  
     "contacts":[{
         "id": "ecd667da-0513-4dd5-ba50-e7cc69f6573c",
         "address": "Apt. 964",

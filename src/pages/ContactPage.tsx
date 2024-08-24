@@ -1,19 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Col, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import { ContactDto } from "src/types/dto/ContactDto";
 import { ContactCard } from "src/components/ContactCard";
 import { Empty } from "src/components/Empty";
-import { useAppSelector } from "src/apps/store/hooks/hooks";
+import { useAppDispatch, useAppSelector } from "src/apps/store/hooks/hooks";
+import { currentContact } from "src/apps/store/ducks/currentContact";
 
 export const ContactPage = () => {
   const { contactId } = useParams<{ contactId: string }>();
-  const [contact, setContact] = useState<ContactDto>();
-  const contactsState = useAppSelector((s) => s.contacts);
+  const contacts = useAppSelector((s) => s.contacts);
+  const contact = useAppSelector((s) => s.contact);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    setContact(() => contactsState.find(({ id }) => id === contactId));
-  }, [contactId, contactsState]);
+    if (contacts && contactId) {
+      dispatch(currentContact({ contacts, contactId }));
+    }
+  }, [contactId, contacts, dispatch]);
 
   return (
     <Row xxl={3}>

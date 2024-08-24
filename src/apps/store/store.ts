@@ -1,39 +1,40 @@
-import {combineReducers, Middleware} from 'redux'
+import {combineReducers} from 'redux'
 import { configureStore } from '@reduxjs/toolkit'
-import { asyncGetContactsApi, asyncGetGroupsApi, contactsListPageSlice, favoriteContactsSlice,groupContactsStateSlice } from './reducers'
-import { contactPageSlice } from './reducers/contactPageReducer'
-import { groupPageSlice } from './reducers/groupPageReducer'
-import { contactsListByGroupSlice } from './reducers/contactsListByGroupReducer'
+import {asyncGetContactsMiddleware, asyncGetContactsPath, asyncGetContactsReducer, contactReducer,contactReducerName} from './ducks/contacts'
+import { groupsReducer, groupsReducerPath,groupsMiddleware } from './ducks/groups'
+import { groupReducer, groupReducerName } from './ducks/currentGroup'
+import { currentContactName, currentContactReducer } from './ducks/currentContact'
+import { 
+  favoritContactsName, 
+  favoritContactsReducer,
+  favoriteContactsApiMiddleware,
+  favoriteContactsApiName,
+  favoriteContactsApiReducer 
+} from './ducks/favoritContacts'
+
 
 
 const reducers = combineReducers({
-contacts:contactsListPageSlice.reducer,
-contact: contactPageSlice.reducer,
-favorite:favoriteContactsSlice.reducer,
-groups:groupContactsStateSlice.reducer,
-group:groupPageSlice.reducer,
-groupContacts:contactsListByGroupSlice.reducer,
-[asyncGetContactsApi.reducerPath]:asyncGetContactsApi.reducer,
-[asyncGetGroupsApi.reducerPath]:asyncGetGroupsApi.reducer
+  [contactReducerName]:contactReducer,
+  [groupReducerName]:groupReducer,
+  [currentContactName]:currentContactReducer,
+  [favoritContactsName]:favoritContactsReducer,
+  [groupsReducerPath]:groupsReducer,
+  [favoriteContactsApiName]:favoriteContactsApiReducer,
+  [asyncGetContactsPath]:asyncGetContactsReducer
 })
 
-export const logActionMiddleware:Middleware<{},RootState> = (storeAPI)=>{
-  return function wrapDispatch(next){
-      return function handleAction(action){
-          console.log(action)
-          next(action)
-      }
-  }
-}
+
 
 
 export const store = configureStore({
   reducer:reducers,
   devTools:true,
   middleware:(getDefaultMiddleware)=>getDefaultMiddleware().concat([
-    asyncGetGroupsApi.middleware,
-    asyncGetContactsApi.middleware,
-    logActionMiddleware])
+    groupsMiddleware,
+    favoriteContactsApiMiddleware,
+    asyncGetContactsMiddleware
+  ])
 }
 )
 

@@ -1,18 +1,19 @@
-import React, { memo } from "react";
+import { memo } from "react";
 import { Col, Row } from "react-bootstrap";
 import { GroupContactsCard } from "src/components/GroupContactsCard";
-import { useAppSelector } from "src/apps/store/hooks/hooks";
+
+import { useGetGroupsQuery } from "src/apps/store/ducks/groups";
 
 export const GroupListPage = memo(() => {
-  const groupContactsState = useAppSelector((s) => s.group);
-
+  const { data: groupContactsState } = useGetGroupsQuery();
   return (
     <Row xxl={4}>
-      {groupContactsState.map((groupContacts) => (
-        <Col key={groupContacts.id}>
-          <GroupContactsCard groupContacts={groupContacts} withLink />
-        </Col>
-      ))}
+      {groupContactsState &&
+        groupContactsState.map((groupContacts) => (
+          <Col key={groupContacts.id}>
+            <GroupContactsCard groupContacts={groupContacts} withLink />
+          </Col>
+        ))}
     </Row>
   );
 });

@@ -1,8 +1,8 @@
 import { Formik } from "formik";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
-import React, { memo } from "react";
+import { memo } from "react";
 import { FormikConfig } from "formik/dist/types";
-import { useAppSelector } from "src/apps/store/hooks/hooks";
+import { useGetGroupsQuery } from "src/apps/store/ducks/groups";
 
 export interface FilterFormValues {
   name: string;
@@ -13,7 +13,8 @@ interface FilterFormProps extends FormikConfig<Partial<FilterFormValues>> {}
 
 export const FilterForm = memo<FilterFormProps>(
   ({ onSubmit, initialValues = {} }) => {
-    const groupContactsList = useAppSelector((s) => s.group);
+    const { data: groupContactsList } = useGetGroupsQuery();
+
     return (
       <Formik initialValues={initialValues} onSubmit={onSubmit}>
         {({ handleChange, handleSubmit }) => (
@@ -38,11 +39,12 @@ export const FilterForm = memo<FilterFormProps>(
                   onChange={handleChange}
                 >
                   <option>Open this select menu</option>
-                  {groupContactsList.map((groupContacts) => (
-                    <option value={groupContacts.id} key={groupContacts.id}>
-                      {groupContacts.name}
-                    </option>
-                  ))}
+                  {groupContactsList &&
+                    groupContactsList.map((groupContacts) => (
+                      <option value={groupContacts.id} key={groupContacts.id}>
+                        {groupContacts.name}
+                      </option>
+                    ))}
                 </Form.Select>
               </Col>
               <Col>

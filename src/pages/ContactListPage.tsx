@@ -1,43 +1,24 @@
-import React, { memo, useEffect, useState } from "react";
+import { memo } from "react";
 import { Col, Row } from "react-bootstrap";
 import { ContactCard } from "src/components/ContactCard";
 import { FilterForm, FilterFormValues } from "src/components/FilterForm";
-import { ContactDto } from "src/types/dto/ContactDto";
-import { useAppSelector } from "src/apps/store/hooks/hooks";
+import { useAppDispatch, useAppSelector } from "src/apps/store/hooks/hooks";
+import {
+  filterContactsReducer,
+  useGetContactsQuery,
+} from "src/apps/store/ducks/contacts";
+import { useGetGroupsQuery } from "src/apps/store/ducks/groups";
 
 export const ContactListPage = memo(() => {
-  const contactsState = useAppSelector((s) => s.contact);
-  const groupContactsState = useAppSelector((s) => s.group);
-
-  const [contacts, setContacts] = useState<ContactDto[]>([]);
-
-  useEffect(() => {
-    setContacts(contactsState);
-  }, [contactsState]);
+  const dispatch = useAppDispatch();
+  const { data: groupContactsState } = useGetGroupsQuery();
+  const { data: dataContacts } = useGetContactsQuery();
+  const contacts = useAppSelector((s) => s.contacts);
 
   const onSubmit = (fv: Partial<FilterFormValues>) => {
-    let findContacts: ContactDto[] = contactsState;
-
-    if (fv.name) {
-      const fvName = fv.name.toLowerCase();
-      findContacts = findContacts.filter(
-        ({ name }) => name.toLowerCase().indexOf(fvName) > -1
-      );
+    if (fv.groupId === "Open this select menu" && fv.name === "") {
     }
-
-    if (fv.groupId) {
-      const groupContacts = groupContactsState.find(
-        ({ id }) => id === fv.groupId
-      );
-
-      if (groupContacts) {
-        findContacts = findContacts.filter(({ id }) =>
-          groupContacts.contactIds.includes(id)
-        );
-      }
-    }
-
-    setContacts(findContacts);
+    dispatch(filterContactsReducer({ fv, groupContactsState, dataContacts }));
   };
 
   return (
@@ -47,11 +28,12 @@ export const ContactListPage = memo(() => {
       </Col>
       <Col>
         <Row xxl={4} className="g-4">
-          {contacts.map((contact) => (
-            <Col key={contact.id}>
-              <ContactCard contact={contact} withLink />
-            </Col>
-          ))}
+          {contacts &&
+            contacts.map((contact) => (
+              <Col key={contact.id}>
+                <ContactCard contact={contact} withLink />
+              </Col>
+            ))}
         </Row>
       </Col>
     </Row>

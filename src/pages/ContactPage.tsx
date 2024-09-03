@@ -3,26 +3,23 @@ import { Col, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { ContactCard } from "src/components/ContactCard";
 import { Empty } from "src/components/Empty";
-import { useAppDispatch, useAppSelector } from "src/apps/store/hooks/hooks";
-import { currentContact } from "src/apps/store/ducks/currentContact";
+import { store } from "src/apps/store/store";
+import { observer } from "mobx-react-lite";
 
-export const ContactPage = () => {
+export const ContactPage = observer(() => {
   const { contactId } = useParams<{ contactId: string }>();
-  const contacts = useAppSelector((s) => s.contacts);
-  const contact = useAppSelector((s) => s.contact);
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (contacts && contactId) {
-      dispatch(currentContact({ contacts, contactId }));
+    if (contactId) {
+      store.getCurrentContacts(contactId);
     }
-  }, [contactId, contacts, dispatch]);
+  }, [contactId]);
 
   return (
     <Row xxl={3}>
       <Col className={"mx-auto"}>
-        {contact ? <ContactCard contact={contact} /> : <Empty />}
+        {store.contact ? <ContactCard contact={store.contact} /> : <Empty />}
       </Col>
     </Row>
   );
-};
+});

@@ -1,23 +1,10 @@
-import { memo, useEffect } from "react";
+import { memo } from "react";
 import { Col, Row } from "react-bootstrap";
 import { ContactCard } from "src/components/ContactCard";
-import { useAppDispatch, useAppSelector } from "src/apps/store/hooks/hooks";
-import {
-  getFavoritContacts,
-  useGetFavoriteContactsQuery,
-} from "src/apps/store/ducks/favoritContacts";
+import { ContactDto } from "src/types/dto/ContactDto";
 
 export const FavoritListPage = memo(() => {
-  const favoriteContacts = useAppSelector((s) => s.favorite);
-  const contactsState = useAppSelector((s) => s.contacts);
-  const { data: favoriteContactsState } = useGetFavoriteContactsQuery();
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (favoriteContactsState && contactsState) {
-      dispatch(getFavoritContacts({ contactsState, favoriteContactsState }));
-    }
-  }, [favoriteContactsState, contactsState, dispatch]);
+  const favoriteContacts = [] as ContactDto[];
 
   return (
     <Row xxl={4} className="g-4">

@@ -2,7 +2,7 @@ import { Formik } from "formik";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import { memo } from "react";
 import { FormikConfig } from "formik/dist/types";
-import { useGetGroupsQuery } from "src/apps/store/ducks/groups";
+import { ContactDto } from "src/types/dto/ContactDto";
 
 export interface FilterFormValues {
   name: string;
@@ -13,7 +13,7 @@ interface FilterFormProps extends FormikConfig<Partial<FilterFormValues>> {}
 
 export const FilterForm = memo<FilterFormProps>(
   ({ onSubmit, initialValues = {} }) => {
-    const { data: groupContactsList } = useGetGroupsQuery();
+    const groupContactsList = [] as ContactDto[];
 
     return (
       <Formik initialValues={initialValues} onSubmit={onSubmit}>

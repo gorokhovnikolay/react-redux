@@ -1,41 +1,26 @@
-import {combineReducers} from 'redux'
-import { configureStore } from '@reduxjs/toolkit'
-import {asyncGetContactsMiddleware, asyncGetContactsPath, asyncGetContactsReducer, contactReducer,contactReducerName} from './ducks/contacts'
-import { groupsReducer, groupsReducerPath,groupsMiddleware } from './ducks/groups'
-import { groupReducer, groupReducerName } from './ducks/currentGroup'
-import { currentContactName, currentContactReducer } from './ducks/currentContact'
-import { 
-  favoritContactsName, 
-  favoritContactsReducer,
-  favoriteContactsApiMiddleware,
-  favoriteContactsApiName,
-  favoriteContactsApiReducer 
-} from './ducks/favoritContacts'
+import {makeAutoObservable} from 'mobx'
+import { ContactDto } from 'src/types/dto/ContactDto'
+import { GroupContactsDto } from 'src/types/dto/GroupContactsDto'
 
-
-
-const reducers = combineReducers({
-  [contactReducerName]:contactReducer,
-  [groupReducerName]:groupReducer,
-  [currentContactName]:currentContactReducer,
-  [favoritContactsName]:favoritContactsReducer,
-  [groupsReducerPath]:groupsReducer,
-  [favoriteContactsApiName]:favoriteContactsApiReducer,
-  [asyncGetContactsPath]:asyncGetContactsReducer
+export const store =makeAutoObservable ({
+  contacts:[] as ContactDto[],
+  contact:{} as ContactDto | undefined, 
+  group:{} as GroupContactsDto| undefined,
+  groups:[] as GroupContactsDto[] ,
+  getCurrentContacts(id:ContactDto['id']){
+    store.contact = this.contacts.find((item)=>item.id === id) 
+  },
+  getCurrentGroup(id:GroupContactsDto['id']){
+    store.group = this.groups.find((item)=>item.id === id) 
+  },
+  *getContacts(){
+    const data:ContactDto[] = yield fetch('https://fs04.gcfiles.net/fileservice/file/download/a/177331/sc/385/h/0afc05779dcbbebd7055a1d87b8c7c6b.json').then(res=>res.json())
+    
+    store.contacts = data
+  },
+  *getGroups(){
+    const data:GroupContactsDto[] = yield fetch('https://fs04.gcfiles.net/fileservice/file/download/a/177331/sc/0/h/f1e98b0d70d16a909818b03b72415733.json').then(res=>res.json())
+    store.groups = data
+  }
 })
 
-
-
-
-export const store = configureStore({
-  reducer:reducers,
-  devTools:true,
-  middleware:(getDefaultMiddleware)=>getDefaultMiddleware().concat([
-    groupsMiddleware,
-    favoriteContactsApiMiddleware,
-    asyncGetContactsMiddleware
-  ])
-}
-)
-
-export type RootState = ReturnType<typeof reducers>

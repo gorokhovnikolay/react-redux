@@ -8,12 +8,16 @@ import { observer } from "mobx-react-lite";
 export const ContactListPage = observer(() => {
   useEffect(() => {
     store.getContacts();
+    store.getGroups();
   }, []);
 
-  const onSubmit = (fv: Partial<FilterFormValues>) => {
-    // if (fv.groupId === "Open this select menu" && fv.name === "") {
-    // }
-    // dispatch(filterContactsReducer({ fv, groupContactsState, dataContacts }));
+  const onSubmit = async (fv: Partial<FilterFormValues>) => {
+    if (fv.groupId === "Open this select menu" && !fv.name) {
+      await store.getContacts();
+    } else {
+      await store.getContacts();
+      store.filterContacts(fv);
+    }
   };
   return (
     <Row xxl={1}>
